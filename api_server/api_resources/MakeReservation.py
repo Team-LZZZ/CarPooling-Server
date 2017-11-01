@@ -4,15 +4,13 @@ from ..forms import PostTradeForm
 from ..database import Post
 from api_server import db
 import datetime
-from .GetToken import auth
 import sys
 
 
-class UserCurrencyPostManagement(Resource):
+class MakeReservation(Resource):
     """
     This is the api class for the user post, update, delete and get trade information
     """
-    decorators = [auth.login_required]
 
     def put(self, tid):
         """
@@ -49,7 +47,8 @@ class UserCurrencyPostManagement(Resource):
         form = PostTradeForm.from_json(request.get_json())
         if form.validate_on_submit():
             post = Post(uid=g.user.id, c1_item=form.c1_item.data, c2_item=form.c2_item.data,
-                        c1_number=form.c1_number.data, c2_number=form.c2_number.data, league=form.league.data, name=form.user_name.data, time=datetime.datetime.now())
+                        c1_number=form.c1_number.data, c2_number=form.c2_number.data, league=form.league.data,
+                        name=form.user_name.data, time=datetime.datetime.now())
             db.session.add(post)
             db.session.commit()
             return jsonify({"post_status": True})
@@ -69,7 +68,6 @@ class UserCurrencyPostManagement(Resource):
             return jsonify({"delete_post_status": "Success"})
         except:
             return jsonify({"delete_post_status": False, "message": sys.exc_info()[0]})
-
 
     def get(self, tid=None):
         """

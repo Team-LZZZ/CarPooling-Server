@@ -5,7 +5,7 @@ from ..database import Currency
 from ..forms import CurrencySearchForm
 
 
-class UserCurrencyPostSearch(Resource):
+class MakeOffer(Resource):
     """
     this is the api for the currency part
     """

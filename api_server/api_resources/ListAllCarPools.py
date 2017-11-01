@@ -3,12 +3,9 @@ from flask_restful import Resource
 from api_server import db
 from ..database import Search
 import sys
-from .GetToken import auth
 
 
-class UserItemSearchHistory(Resource):
-    decorators = [auth.login_required]
-
+class ListAllCarPools(Resource):
     # get current users search history
     def get(self, sid=None):
         if sid:
