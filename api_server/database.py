@@ -1,14 +1,21 @@
 from . import db
-from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from config import DevelopmentConfig
+
+
+# app = Flask(__name__)
+# app.config.from_object(DevelopmentConfig)
+# db = SQLAlchemy(app)
 
 
 class User(db.Model):
     __tablename__ = 'User'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    email = db.Column(db.String(64), unique=True)
+    # id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), primary_key=True)
+    phone = db.Column(db.Integer)
+    photo = db.Column(db.String(64))
     password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
 
@@ -29,72 +36,49 @@ class User(db.Model):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    def generate_auth_token(self, expiration=1800):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'id': self.id})
 
-    @staticmethod
-    def verify_auth_token(token):
-        s = Serializer(current_app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None  # valid token, but expired
-        except BadSignature:
-            return None  # invalid token
-        user = User.query.get(data['id'])
-        return user
+class Location(db.Model):
+    __tablename__ = 'Location'
+    ll = db.Column(db.String(128), primary_key=True)
+    streetNum = db.Column(db.Integer)
+    street = db.Column(db.String(64))
+    city = db.Column(db.String(64))
+    state = db.Column(db.String(64))
+    zip = db.Column(db.Integer)
 
 
-class Admin(db.Model):
-    __tablename__ = 'Admin'
-    aid = db.Column(db.Integer, primary_key=True)
-    id = db.Column(db.Integer, db.ForeignKey('User.id'))
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    # def __repr__(self):
+    #     return '<Search %r>' % self.sid
+    #
+    # def as_dict(self):
+    #     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class Search(db.Model):
-    __tablename__ = 'Search'
-    sid = db.Column(db.Integer, primary_key=True)  # Search history ID
-    id = db.Column(db.Integer, db.ForeignKey('User.id'))
-    item = db.Column(db.String(64))
-    time = db.Column(db.DateTime)
+class CarPools(db.Model):
+    __tablename__ = 'CarPools'
+    offername = db.Column(db.String(64), db.ForeignKey('User.name'))
+    clientname = db.Column(db.String(64), db.ForeignKey('User.name'), primary_key=True)
+    startLocationLL = db.Column(db.String(64), db.ForeignKey('Location.ll'))
+    targetLocationLL = db.Column(db.String(64), db.ForeignKey('Location.ll'))
+    carPlate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
+    time = db.Column(db.DateTime, primary_key=True)
 
-    def __repr__(self):
-        return '<Search %r>' % self.sid
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-class Post(db.Model):
-    __tablename__ = 'Post'
-    tid = db.Column(db.Integer, primary_key=True)  # Post transaction ID
-    uid = db.Column(db.Integer, db.ForeignKey('User.id'))  # UserID
-    c1_item = db.Column(db.Integer, db.ForeignKey('Currency.cid'))  # The item user wants to sell
-    c2_item = db.Column(db.Integer, db.ForeignKey('Currency.cid'))  # The item user wants to get
-    c1_number = db.Column(db.Integer)
-    c2_number = db.Column(db.Integer)
-    league = db.Column(db.String(64))
-    name = db.Column(db.String(64))
-    time = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return '<Post %r>' % self.tid
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    # def __repr__(self):
+    #     return '<Post %r>' % self.tid
+    #
+    # def as_dict(self):
+    #     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class Currency(db.Model):
-    __tablename__ = 'Currency'
-    cid = db.Column(db.Integer, primary_key=True)
-    cname = db.Column(db.String(64), unique=True, nullable=True)
+class Car(db.Model):
+    __tablename__ = 'Car'
+    plate = db.Column(db.String(64), primary_key=True)
+    make = db.Column(db.String(64))
+    model = db.Column(db.String(64))
+    seatsLimit = db.Column(db.Integer)
 
-    def __repr__(self):
-        return '<Currency %r>' % self.cid
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    # def __repr__(self):
+    #     return '<Currency %r>' % self.cid
+    #
+    # def as_dict(self):
+    #     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
