@@ -1,7 +1,6 @@
 from flask import jsonify, g
 from flask_restful import Resource
 from api_server import db
-from ..database import Search
 import sys
 
 

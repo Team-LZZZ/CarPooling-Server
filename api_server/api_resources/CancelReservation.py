@@ -1,13 +1,10 @@
 from flask import jsonify, g
 from flask_restful import Resource
 from api_server import db
-from ..database import Search
 import sys
 
 
 class CancelReservation(Resource):
-
-    # get current users search history
     def get(self, sid=None):
         if sid:
             return jsonify({"retrieve_search_status": False, "message": "Wrong usage"})

@@ -2,7 +2,6 @@ from flask import request, jsonify, g
 from pymongo import MongoClient, ASCENDING
 from flask_restful import Resource
 from ..forms import ItemQueryForm
-from ..database import Search
 from api_server import db
 import datetime
 

@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource
 from ..forms import LoginForm
-from ..database import User, Admin
+from ..database import User
 
 
 class UserLogin(Resource):
@@ -19,7 +19,7 @@ class UserLogin(Resource):
                 token = user.generate_auth_token()
                 admin = Admin.query.filter_by(id=user.id).first()
                 if admin:
-                    return jsonify({"login_status": True, "Admin": True,"token": token.decode("ascii")})
+                    return jsonify({"login_status": True, "Admin": True, "token": token.decode("ascii")})
                 return jsonify({"login_status": True, "token": token.decode("ascii")})
             elif not user:
                 return jsonify({"login_status": False, "message": "User not exist"})

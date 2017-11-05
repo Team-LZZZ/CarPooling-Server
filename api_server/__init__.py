@@ -6,7 +6,7 @@ import wtforms_json
 
 db = SQLAlchemy()
 api = Api()
-main = Blueprint('main',__name__)
+main = Blueprint('main', __name__)
 
 
 def CreateApp(config_name):

@@ -1,7 +1,5 @@
 from flask import request, jsonify
 from flask_restful import Resource
-from ..database import Post
-from ..database import Currency
 from ..forms import CurrencySearchForm
 
 

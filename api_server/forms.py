@@ -14,10 +14,10 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     name = StringField('Username', validators=[Length(1, 64)])
     email = StringField('Email Address', validators=[DataRequired(), Length(1, 64), Email()])
-    password = PasswordField('New Password',
-                             validators=[DataRequired(), EqualTo('confirm_password', message='Passwords must match')])
-    confirm_password = PasswordField('Repeat Password', validators=[DataRequired()])
-    accept_tos = BooleanField('I accept the TOS', validators=[DataRequired()])
+    password = PasswordField('Password',
+                             validators=[DataRequired()])
+    phone = IntegerField('Phone', default=0)
+    photo = StringField('Photo', default="")
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
@@ -99,7 +99,7 @@ class ItemQueryForm(FlaskForm):
     dex_socket = IntegerField('DEX Sockets Number', validators=[NumberRange(0, 6), Optional()], default=None)
     int_socket = IntegerField('INT Sockets Number', validators=[NumberRange(0, 6), Optional()], default=None)
     other_socket = IntegerField('White Sockets Number', validators=[NumberRange(0, 6), Optional()],
-                                    default=None)
+                                default=None)
 
     supported = BooleanField('Support Skill Gem', validators=[Optional()], default=None)
 

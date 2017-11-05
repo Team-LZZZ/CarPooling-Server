@@ -1,7 +1,6 @@
 from flask import request, jsonify, g
 from flask_restful import Resource
 from ..forms import PostTradeForm
-from ..database import Post
 from api_server import db
 import datetime
 import sys

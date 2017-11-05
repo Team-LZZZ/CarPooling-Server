@@ -2,18 +2,18 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from config import DevelopmentConfig
+from config import TestConfig
 
-
-# app = Flask(__name__)
-# app.config.from_object(DevelopmentConfig)
-# db = SQLAlchemy(app)
+app = Flask(__name__)
+app.config.from_object(TestConfig)
+db = SQLAlchemy(app)
 
 
 class User(db.Model):
     __tablename__ = 'User'
-    # id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.Integer)
     photo = db.Column(db.String(64))
     password = db.Column(db.String(128))
@@ -56,8 +56,8 @@ class Location(db.Model):
 
 class CarPools(db.Model):
     __tablename__ = 'CarPools'
-    offername = db.Column(db.String(64), db.ForeignKey('User.name'))
-    clientname = db.Column(db.String(64), db.ForeignKey('User.name'), primary_key=True)
+    offerId = db.Column(db.String(64), db.ForeignKey('User.id'))
+    clientId = db.Column(db.String(64), db.ForeignKey('User.id'), primary_key=True)
     startLocationLL = db.Column(db.String(64), db.ForeignKey('Location.ll'))
     targetLocationLL = db.Column(db.String(64), db.ForeignKey('Location.ll'))
     carPlate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
