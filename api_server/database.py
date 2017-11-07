@@ -15,7 +15,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), unique=True)
-    phone = db.Column(db.Integer)
+    phone = db.Column(db.String(64))
     photo = db.Column(db.String(64))
     password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
@@ -61,7 +61,7 @@ class Location(db.Model):
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
     state = db.Column(db.String(64))
-    zip = db.Column(db.Integer)
+    zip = db.Column(db.String(32))
 
 
     # def __repr__(self):
@@ -90,8 +90,8 @@ class CarPools(db.Model):
 class Car(db.Model):
     __tablename__ = 'Car'
     plate = db.Column(db.String(64), primary_key=True)
-    make = db.Column(db.String(64))
-    model = db.Column(db.String(64))
+    make = db.Column(db.String(32))
+    model = db.Column(db.String(32))
     seatsLimit = db.Column(db.Integer)
 
     # def __repr__(self):
