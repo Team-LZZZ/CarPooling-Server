@@ -3,12 +3,14 @@ from flask_restful import Resource
 from ..forms import UpdateForm
 from ..database import User
 from api_server import db
+from .GetToken import auth
 
 
 class UpdateSettings(Resource):
     """
     this is the API for user update information
     """
+    decorators = [auth.login_required]
 
     def put(self):
         """

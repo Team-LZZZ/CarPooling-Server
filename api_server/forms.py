@@ -6,7 +6,7 @@ from .database import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField('UserID', validators=[DataRequired()])
+    name = StringField('UserID', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('remember_me', default=False)
 
@@ -32,9 +32,7 @@ class UpdateForm(FlaskForm):
     email = StringField('Email Address', validators=[Length(1, 64), Email(), Optional()])
     current_password = PasswordField('Current Password', validators=[DataRequired()])
     new_password = PasswordField('New Password',
-                                 validators=[EqualTo('confirm_new_password', message='Passwords must match'),
-                                             Optional()])
-    confirm_new_password = PasswordField('Repeat Password')
+                                 validators=[DataRequired()])
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():

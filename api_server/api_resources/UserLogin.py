@@ -14,12 +14,9 @@ class UserLogin(Resource):
     def post(self):
         form = LoginForm.from_json(request.get_json())
         if form.validate_on_submit():
-            user = User.query.filter_by(name=form.username.data).first()
+            user = User.query.filter_by(name=form.name.data).first()
             if user and user.verify_password(form.password.data):
                 token = user.generate_auth_token()
-                admin = Admin.query.filter_by(id=user.id).first()
-                if admin:
-                    return jsonify({"login_status": True, "Admin": True, "token": token.decode("ascii")})
                 return jsonify({"login_status": True, "token": token.decode("ascii")})
             elif not user:
                 return jsonify({"login_status": False, "message": "User not exist"})
