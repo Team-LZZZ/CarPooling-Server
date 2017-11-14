@@ -6,7 +6,7 @@ from api_server import db
 from .GetToken import auth
 
 
-class UpdateSettings(Resource):
+class UserSettings(Resource):
     """
     this is the API for user update information
     """

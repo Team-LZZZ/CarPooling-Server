@@ -63,16 +63,15 @@ class Location(db.Model):
     state = db.Column(db.String(64))
     zip = db.Column(db.String(32))
 
+    def __repr__(self):
+        return '<Location %r>' % self.ll
 
-    # def __repr__(self):
-    #     return '<Search %r>' % self.sid
-    #
-    # def as_dict(self):
-    #     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class CarPools(db.Model):
-    __tablename__ = 'CarPools'
+class CarPool(db.Model):
+    __tablename__ = 'CarPool'
     offerId = db.Column(db.Integer, db.ForeignKey('User.id'))
     clientId = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
     startLocationLL = db.Column(db.String(128), db.ForeignKey('Location.ll'))
@@ -80,11 +79,11 @@ class CarPools(db.Model):
     carPlate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
     time = db.Column(db.DateTime, primary_key=True)
 
-    # def __repr__(self):
-    #     return '<Post %r>' % self.tid
-    #
-    # def as_dict(self):
-    #     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    def __repr__(self):
+        return '<CarPools %r>' % self.clientId, self.time
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Car(db.Model):
@@ -94,8 +93,8 @@ class Car(db.Model):
     model = db.Column(db.String(32))
     seatsLimit = db.Column(db.Integer)
 
-    # def __repr__(self):
-    #     return '<Currency %r>' % self.cid
-    #
-    # def as_dict(self):
-    #     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    def __repr__(self):
+        return '<Car %r>' % self.plate
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

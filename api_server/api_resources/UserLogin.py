@@ -6,9 +6,7 @@ from ..database import User
 
 class UserLogin(Resource):
     """
-    the content validation should be done in the both front-end and back-end
-    front-end transfer the json to the back-end
-    and back-end will do the validation again
+        this is the API for user login
     """
 
     def post(self):

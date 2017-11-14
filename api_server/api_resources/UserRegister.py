@@ -7,9 +7,7 @@ from api_server import db
 
 class UserRegister(Resource):
     """
-    the content validation should be done in the both ends
-    front-end transfer the json to the back-end
-    and back-end will do the validation again
+        this is the API for user registration
     """
 
     def post(self):
