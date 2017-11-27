@@ -3,10 +3,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, current_app
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-from config import TestConfig
+from config import DevelopmentConfig
 
 app = Flask(__name__)
-app.config.from_object(TestConfig)
+app.config.from_object(DevelopmentConfig)
 db = SQLAlchemy(app)
 
 
