@@ -5,9 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from config import DevelopmentConfig
 
-app = Flask(__name__)
-app.config.from_object(DevelopmentConfig)
-db = SQLAlchemy(app)
+
+# app = Flask(__name__)
+# app.config.from_object(DevelopmentConfig)
+# db = SQLAlchemy(app)
 
 
 class User(db.Model):
