@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from flask_restful import Resource
-from ..database import CarPool, Location
+from ..database import Offer, Location
 from api_server import db
 from api_server.forms import CarPoolSearchForm
 from sqlalchemy import desc
@@ -15,10 +15,10 @@ class CarPools(Resource):
         # get allCarPools.
         start = db.aliased(Location)
         end = db.aliased(Location)
-        allCarPools = db.session.query(start.zip, start.street, start.streetNum,
-                                       end.zip, end.street, end.streetNum, CarPool.time). \
-            filter(start.ll == CarPool.startLocationLL, end.ll == CarPool.targetLocationLL). \
-            order_by(desc(CarPool.time)).all()
+        allCarPools = db.session.query(start.zip, start.street, start.street_num,
+                                       end.zip, end.street, end.street_num, Offer.time). \
+            filter(start.ll == Offer.start_location, end.ll == Offer.target_location). \
+            order_by(desc(Offer.time)).all()
 
         return jsonify(allCarPools)
 
@@ -29,9 +29,9 @@ class CarPools(Resource):
         # query = []
         form = CarPoolSearchForm.from_json(request.get_json())
         carPools = db.session.query(start.zip, start.street, start.streetNum,
-                                    end.zip, end.street, end.streetNum, CarPool.time). \
-            filter(start.ll == CarPool.startLocationLL, end.ll == CarPool.targetLocationLL,
-                   start.ll == form.start.data, end.ll == form.end.data). \
-            order_by(desc(CarPool.time)).all()
+                                    end.zip, end.street, end.streetNum, Offer.time). \
+            filter(start.ll == Offer.start_location, end.ll == Offer.target_location,
+                   start.ll == form.start_location.data, end.ll == form.target_location.data). \
+            order_by(desc(Offer.time)).all()
 
         return jsonify(carPools)

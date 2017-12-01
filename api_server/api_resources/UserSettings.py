@@ -27,6 +27,8 @@ class UserSettings(Resource):
             current_user = User.query.filter_by(id=g.user.id).first()
             if form.email.data:
                 current_user.email = form.email.data
+            if form.phone.data:
+                current_user.phone = form.phone.data
             if form.new_password.data:
                 current_user.password = form.new_password.data
             db.session.commit()

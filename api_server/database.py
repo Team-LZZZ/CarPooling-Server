@@ -14,7 +14,7 @@ from config import DevelopmentConfig
 class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(64))
     photo = db.Column(db.String(64))
@@ -58,11 +58,11 @@ class User(db.Model):
 class Location(db.Model):
     __tablename__ = 'Location'
     ll = db.Column(db.String(128), primary_key=True)
-    streetNum = db.Column(db.Integer)
+    street_num = db.Column(db.Integer)
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
     state = db.Column(db.String(64))
-    zip = db.Column(db.String(32))
+    zip = db.Column(db.String(64))
 
     def __repr__(self):
         return '<Location %r>' % self.ll
@@ -71,17 +71,30 @@ class Location(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class CarPool(db.Model):
-    __tablename__ = 'CarPool'
-    offerId = db.Column(db.Integer, db.ForeignKey('User.id'))
-    clientId = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
-    startLocationLL = db.Column(db.String(128), db.ForeignKey('Location.ll'))
-    targetLocationLL = db.Column(db.String(128), db.ForeignKey('Location.ll'))
-    carPlate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
+class Reservation(db.Model):
+    __tablename__ = 'Reservation'
+    offer_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
+    client_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
     time = db.Column(db.DateTime, primary_key=True)
 
     def __repr__(self):
-        return '<CarPools %r>' % self.clientId, self.time
+        return '<Reservation %r>' % self.offer_name, self.client_name, self.time
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Offer(db.Model):
+    __tablename__ = 'Offer'
+    offer_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
+    start_location = db.Column(db.String(128), db.ForeignKey('Location.ll'))
+    target_location = db.Column(db.String(128), db.ForeignKey('Location.ll'))
+    car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
+    time = db.Column(db.DateTime, primary_key=True)
+    seats_available = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Offer %r>' % self.offer_name, self.time
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -92,7 +105,8 @@ class Car(db.Model):
     plate = db.Column(db.String(64), primary_key=True)
     make = db.Column(db.String(32))
     model = db.Column(db.String(32))
-    seatsLimit = db.Column(db.Integer)
+
+    # seatsLimit = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Car %r>' % self.plate
