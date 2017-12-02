@@ -17,7 +17,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
     password = PasswordField('Password',
                              validators=[DataRequired()])
-    phone = IntegerField('Phone', default=0)
+    phone = StringField('Phone', default=0)
     photo = StringField('Photo', default="")
 
     # def validate_email(self, field):
