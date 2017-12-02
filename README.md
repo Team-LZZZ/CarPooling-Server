@@ -1,6 +1,8 @@
 # CarPooling-Server
 The server part of mobile final project.
 ## APIs offered by server
+API docs link : https://www.showdoc.cc/1697597?page_id=15649522 <br>
+All the request urls should be added with prefix - youzhou1993.pythonanywhere.com/api/
 ### Get
 1.listAllCarPools(Query query)----------return List<CarPools>		<br>
 2.getHistory(User)----------return List<CarPool>
