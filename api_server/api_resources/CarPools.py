@@ -42,8 +42,8 @@ class CarPools(Resource):
         end = db.aliased(Location)
         # query = []
         form = CarPoolSearchForm.from_json(request.get_json())
-        carPools = db.session.query(start.zip, start.street, start.streetNum,
-                                    end.zip, end.street, end.streetNum, Offer.time). \
+        carPools = db.session.query(start.zip, start.street, start.street_num,
+                                    end.zip, end.street, end.street_num, Offer.time). \
             filter(start.ll == Offer.start_location, end.ll == Offer.target_location,
                    start.ll == form.start_location.data, end.ll == form.target_location.data). \
             order_by(desc(Offer.time)).all()
