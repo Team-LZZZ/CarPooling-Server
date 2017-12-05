@@ -55,8 +55,8 @@ class User(db.Model):
 
 class Location(db.Model):
     __tablename__ = 'Location'
-    longitude = db.Column(db.Integer, primary_key=True)
-    latitude = db.Column(db.Integer, primary_key=True)
+    longitude = db.Column(db.Float(32), primary_key=True)
+    latitude = db.Column(db.Float(32), primary_key=True)
     street_num = db.Column(db.Integer)
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
