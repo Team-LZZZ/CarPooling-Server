@@ -4,6 +4,7 @@ from ..database import Offer, Location
 from api_server import db
 from api_server.forms import CarPoolSearchForm
 from sqlalchemy import desc
+from .GetToken import auth
 
 
 class CarPools(Resource):
@@ -11,6 +12,7 @@ class CarPools(Resource):
         this is the API for carpools resource
     
     """
+    decorators = [auth.login_required]
 
     def encode_json(carpools):
         result = []
@@ -23,6 +25,7 @@ class CarPools(Resource):
             unit['end_st'] = i[4]
             unit['end_stnum'] = i[5]
             unit['time'] = i[6]
+            unit['num'] = i[7]
             result.append(unit)
         return result
 
@@ -31,8 +34,9 @@ class CarPools(Resource):
         start = db.aliased(Location)
         end = db.aliased(Location)
         allCarPools = db.session.query(start.zip, start.street, start.street_num,
-                                       end.zip, end.street, end.street_num, Offer.time). \
-            filter(start.ll == Offer.start_location, end.ll == Offer.target_location). \
+                                       end.zip, end.street, end.street_num, Offer.time, Offer.seats_available). \
+            filter(start.longitude == Offer.start_longitude, start.latitude == Offer.start_latitude,
+                   end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude). \
             order_by(desc(Offer.time)).all()
         return jsonify(CarPools.encode_json(allCarPools))
 
@@ -40,11 +44,21 @@ class CarPools(Resource):
         # query CarPools.
         start = db.aliased(Location)
         end = db.aliased(Location)
-        # query = []
         form = CarPoolSearchForm.from_json(request.get_json())
-        carPools = db.session.query(start.zip, start.street, start.street_num,
-                                    end.zip, end.street, end.street_num, Offer.time). \
-            filter(start.ll == Offer.start_location, end.ll == Offer.target_location,
-                   start.ll == form.start_location.data, end.ll == form.target_location.data). \
-            order_by(desc(Offer.time)).all()
+        if form.time:
+            carPools = db.session.query(start.zip, start.street, start.street_num,
+                                        end.zip, end.street, end.street_num, Offer.time, Offer.seats_available). \
+                filter(start.longitude == Offer.start_longitude, start.latitude == Offer.start_latitude,
+                       end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude,
+                       end.longitude == form.target_longitude.data, end.latitude == form.target_latitude.data,
+                       Offer.time == form.time.data). \
+                order_by(desc(Offer.time)).all()
+        else:
+            carPools = db.session.query(start.zip, start.street, start.street_num,
+                                        end.zip, end.street, end.street_num, Offer.time, Offer.seats_available). \
+                filter(start.longitude == Offer.start_longitude, start.latitude == Offer.start_latitude,
+                       end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude,
+                       end.longitude == form.target_longitude.data, end.latitude == form.target_latitude.data). \
+                order_by(desc(Offer.time)).all()
+
         return jsonify(CarPools.encode_json(carPools))

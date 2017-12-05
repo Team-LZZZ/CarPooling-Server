@@ -11,14 +11,18 @@ class UserLogin(Resource):
 
     def post(self):
         form = LoginForm.from_json(request.get_json())
+        error_messages = []
         if form.validate_on_submit():
             user = User.query.filter_by(name=form.name.data).first()
             if user and user.verify_password(form.password.data):
                 token = user.generate_auth_token()
-                return jsonify({"login_status": True, "token": token.decode("ascii")})
+                return jsonify({"login_status": True, "token": token.decode("ascii"), "message": error_messages})
             elif not user:
-                return jsonify({"login_status": False, "message": "User not exist"})
+                error_messages.append("User not exist")
+                return jsonify({"login_status": False, "message": error_messages})
             else:
-                return jsonify({"login_status": False, "message": "Wrong password"})
+                error_messages.append("Wrong password")
+                return jsonify({"login_status": False, "message": error_messages})
         else:
-            return jsonify({"login_status": False, "message": form.errors})
+            error_messages = [form.errors[n] for n in form.errors][0]
+            return jsonify({"login_status": False, "message": error_messages})

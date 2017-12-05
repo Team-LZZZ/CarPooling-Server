@@ -33,4 +33,5 @@ class UserSettings(Resource):
                 current_user.password = form.new_password.data
             db.session.commit()
             return jsonify({"update_status": True})
-        return jsonify({"update_status": False, "message": form.errors})
+        error_message = [form.errors[n] for n in form.errors][0]
+        return jsonify({"update_status": False, "message": error_message})

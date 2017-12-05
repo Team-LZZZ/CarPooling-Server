@@ -14,11 +14,10 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 64)])
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64)])
     password = PasswordField('Password',
                              validators=[DataRequired()])
     phone = StringField('Phone', default=0)
-    photo = StringField('Photo', default="")
 
     # def validate_email(self, field):
     #     if User.query.filter_by(email=field.data).first():
@@ -43,8 +42,10 @@ class UpdateForm(FlaskForm):
 
 class OfferForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 64)])
-    start_location = StringField('startLocationLL', validators=[DataRequired(), Length(1, 128)])
-    target_location = StringField('targetLocationLL', validators=[DataRequired(), Length(1, 128)])
+    start_longitude = FloatField('start_longitude', validators=[DataRequired()])
+    start_latitude = FloatField('start_latitude', validators=[DataRequired()])
+    target_longitude = FloatField('target_longitude', validators=[DataRequired()])
+    target_latitude = FloatField('target_latitude', validators=[DataRequired()])
     time = DateTimeField('time', validators=[DataRequired()])
     seats_available = IntegerField('seatsAvailable', validators=[DataRequired()])
     car_plate = StringField('carPlate', validators=[DataRequired(), Length(1, 64)])
@@ -54,9 +55,10 @@ class ReservationForm(FlaskForm):
     offer_name = StringField('Offer', validators=[DataRequired(), Length(1, 64)])
     client_name = StringField('Client', validators=[DataRequired(), Length(1, 64)])
     time = DateTimeField('time', validators=[DataRequired()])
+    num = IntegerField('num', default=1)
 
 
 class CarPoolSearchForm(FlaskForm):
     time = DateTimeField('time')
-    start_location = StringField('startLocationLL', validators=[DataRequired(), Length(1, 128)])
-    target_location = StringField('targetLocationLL', validators=[DataRequired(), Length(1, 128)])
+    target_longitude = FloatField('target_longitude', validators=[DataRequired()])
+    target_latitude = FloatField('target_latitude', validators=[DataRequired()])

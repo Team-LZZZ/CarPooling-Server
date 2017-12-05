@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from config import DevelopmentConfig
 
-
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 db = SQLAlchemy(app)
@@ -15,9 +14,8 @@ class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    email = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(64))
     phone = db.Column(db.String(64))
-    photo = db.Column(db.String(64))
     password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
 
@@ -57,7 +55,8 @@ class User(db.Model):
 
 class Location(db.Model):
     __tablename__ = 'Location'
-    ll = db.Column(db.String(128), primary_key=True)
+    longitude = db.Column(db.Float(), primary_key=True)
+    latitude = db.Column(db.Float(), primary_key=True)
     street_num = db.Column(db.Integer)
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
@@ -87,8 +86,10 @@ class Reservation(db.Model):
 class Offer(db.Model):
     __tablename__ = 'Offer'
     offer_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
-    start_location = db.Column(db.String(128), db.ForeignKey('Location.ll'))
-    target_location = db.Column(db.String(128), db.ForeignKey('Location.ll'))
+    start_longitude = db.Column(db.Float(), db.ForeignKey('Location.longitude'))
+    start_latitude = db.Column(db.Float(), db.ForeignKey('Location.latitude'))
+    end_longitude = db.Column(db.Float(), db.ForeignKey('Location.longitude'))
+    end_latitude = db.Column(db.Float(), db.ForeignKey('Location.latitude'))
     car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
     time = db.Column(db.DateTime, primary_key=True)
     seats_available = db.Column(db.Integer)
@@ -105,8 +106,6 @@ class Car(db.Model):
     plate = db.Column(db.String(64), primary_key=True)
     make = db.Column(db.String(32))
     model = db.Column(db.String(32))
-
-    # seatsLimit = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Car %r>' % self.plate
