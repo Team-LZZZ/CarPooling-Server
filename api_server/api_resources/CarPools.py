@@ -45,7 +45,7 @@ class CarPools(Resource):
         start = db.aliased(Location)
         end = db.aliased(Location)
         form = CarPoolSearchForm.from_json(request.get_json())
-        if form.time:
+        if form.time.data:
             carPools = db.session.query(start.zip, start.street, start.street_num,
                                         end.zip, end.street, end.street_num, Offer.time, Offer.seats_available). \
                 filter(start.longitude == Offer.start_longitude, start.latitude == Offer.start_latitude,

@@ -55,8 +55,8 @@ class User(db.Model):
 
 class Location(db.Model):
     __tablename__ = 'Location'
-    longitude = db.Column(db.Float(), primary_key=True)
-    latitude = db.Column(db.Float(), primary_key=True)
+    longitude = db.Column(db.Integer, primary_key=True)
+    latitude = db.Column(db.Integer, primary_key=True)
     street_num = db.Column(db.Integer)
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
@@ -86,13 +86,15 @@ class Reservation(db.Model):
 class Offer(db.Model):
     __tablename__ = 'Offer'
     offer_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
-    start_longitude = db.Column(db.Float(), db.ForeignKey('Location.longitude'))
-    start_latitude = db.Column(db.Float(), db.ForeignKey('Location.latitude'))
-    end_longitude = db.Column(db.Float(), db.ForeignKey('Location.longitude'))
-    end_latitude = db.Column(db.Float(), db.ForeignKey('Location.latitude'))
-    car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
     time = db.Column(db.DateTime, primary_key=True)
+    start_longitude = db.Column(db.Float(32))
+    start_latitude = db.Column(db.Float(32))
+    end_longitude = db.Column(db.Float(32))
+    end_latitude = db.Column(db.Float(32))
+    car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
     seats_available = db.Column(db.Integer)
+    db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
+    db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])
 
     def __repr__(self):
         return '<Offer %r>' % self.offer_name, self.time
