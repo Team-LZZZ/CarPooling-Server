@@ -69,7 +69,10 @@ class Offers(Resource):
         result['time'] = '00:00:00'
         result['oid'] = 1
         result['available'] = 5
-        return jsonify(result)
+        re = {}
+        re['status'] = True
+        re['message'] = result
+        return jsonify(re)
 
         # return jsonify(Offers.encode_json(allCarPools, clients))
 

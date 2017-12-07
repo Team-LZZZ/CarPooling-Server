@@ -36,7 +36,10 @@ class CarPools(Resource):
             unit['make'] = i[15]
             unit['model'] = i[16]
             result.append(unit)
-        return result
+        re = {}
+        re['status'] = True
+        re['message'] = result
+        return jsonify(re)
 
     def get(self):
         # get allCarPools.
@@ -74,7 +77,10 @@ class CarPools(Resource):
         result['time'] = '00:00:00'
         result['oid'] = 1
         result['available'] = 5
-        return jsonify(result)
+        re = {}
+        re['status'] = True
+        re['message'] = result
+        return jsonify(re)
         # return jsonify(CarPools.encode_json(allCarPools))
 
     def post(self):
@@ -127,6 +133,9 @@ class CarPools(Resource):
         result['time'] = '00:00:00'
         result['oid'] = 1
         result['available'] = 5
-        return jsonify(result)
+        re = {}
+        re['status'] = True
+        re['message'] = result
+        return jsonify(re)
 
         # return jsonify(CarPools.encode_json(carPools))

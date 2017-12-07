@@ -40,7 +40,10 @@ class Reservations(Resource):
         result['date'] = '1970-01-01'
         result['time'] = '00:00:00'
         result['oid'] = 1
-        return jsonify(result)
+        re = {}
+        re['status'] = True
+        re['message'] = result
+        return jsonify(re)
 
     def post(self, tid=None):
         # create new reservations.
