@@ -73,6 +73,6 @@ class Reservations(Resource):
             if trade and trade.uid == g.user.id:
                 db.session.delete(trade)
                 db.session.commit()
-            return jsonify({"delete_post_status": "Success"})
+            return jsonify({"delete_pos_status": "Success"})
         except:
             return jsonify({"delete_post_status": False, "message": sys.exc_info()[0]})
