@@ -55,7 +55,7 @@ class OfferForm(FlaskForm):
 
 
 class ReservationForm(FlaskForm):
-    offer_id = IntegerField('offer_id')
+    offer_id = IntegerField('offer_id', validators=[DataRequired()])
     num = IntegerField('num', default=1)
 
 
