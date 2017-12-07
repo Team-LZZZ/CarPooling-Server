@@ -4,10 +4,12 @@ from flask import Flask, current_app
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from config import DevelopmentConfig
+from sqlalchemy.orm import relationship
 
-app = Flask(__name__)
-app.config.from_object(DevelopmentConfig)
-db = SQLAlchemy(app)
+
+# app = Flask(__name__)
+# app.config.from_object(DevelopmentConfig)
+# db = SQLAlchemy(app)
 
 
 class User(db.Model):
@@ -18,6 +20,8 @@ class User(db.Model):
     phone = db.Column(db.String(64))
     password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
+    offers = db.relationship('Offer', backref='user')
+    reservations = db.relationship('Reservation', backref='reservation_u')
 
     @property
     def password(self):
@@ -95,6 +99,7 @@ class Offer(db.Model):
     end_latitude = db.Column(db.Float(32))
     car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
     seats_available = db.Column(db.Integer)
+    reservations = db.relationship('Reservation', backref='reservation_o')
     db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
     db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])
 

@@ -48,18 +48,42 @@ class Offers(Resource):
             order_by(desc(Offer.oid)).all()
         print(clients)
 
-        return jsonify(Offers.encode_json(allCarPools, clients))
+        result = {}
+        offerer = {}
+        offerer['name'] = "zy"
+        offerer['phone'] = "456788"
+        offerer['email'] = "e@w.com"
+        start = {}
+        start['streetNumber'] = "32"
+        start['street'] = "john"
+        start['city'] = "wor"
+        start['state'] = "MA"
+        start['zip'] = "32567"
+        result['startLocation'] = start
+        result['targetLocation'] = start
+        list = []
+        list.append(offerer)
+        list.append(offerer)
+        result['reserverList'] = list
+        result['date'] = '1970-01-01'
+        result['time'] = '00:00:00'
+        result['oid'] = 1
+        result['available'] = 5
+        return jsonify(result)
+
+        # return jsonify(Offers.encode_json(allCarPools, clients))
 
 
 def post(self):
     # create new offers.
-    form = CurrencySearchForm.from_json(request.get_json())
-    if form.validate_on_submit():
-        search_currency_post = Post.query.filter_by(c1_item=form.c1_item.data, c2_item=form.c2_item.data,
-                                                    league=form.league.data)
-        search_currency_post = search_currency_post.order_by(Post.time)
-        return jsonify([n.as_dict() for n in search_currency_post])
-    return jsonify({"post_search_status": False, "message": form.errors})
+    # form = CurrencySearchForm.from_json(request.get_json())
+    # if form.validate_on_submit():
+    #     search_currency_post = Post.query.filter_by(c1_item=form.c1_item.data, c2_item=form.c2_item.data,
+    #                                                 league=form.league.data)
+    #     search_currency_post = search_currency_post.order_by(Post.time)
+    #     return jsonify([n.as_dict() for n in search_currency_post])
+    # return jsonify({"post_search_status": False, "message": form.errors})
+    return jsonify({"status": True})
 
 
 def delete(self):

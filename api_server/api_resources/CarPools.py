@@ -50,7 +50,32 @@ class CarPools(Resource):
                    end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude, User.id == Offer.offer_id,
                    Car.plate == Offer.car_plate). \
             order_by(desc(Offer.time)).all()
-        return jsonify(CarPools.encode_json(allCarPools))
+
+        result = {}
+        car = {}
+        car['plate'] = "65dfl"
+        car['model'] = "mazda 6"
+        car['make'] = "mazda"
+        result['car'] = car
+        offerer = {}
+        offerer['name'] = "zy"
+        offerer['phone'] = "456788"
+        offerer['email'] = "e@w.com"
+        result['offerer'] = offerer
+        start = {}
+        start['streetNumber'] = "32"
+        start['street'] = "john"
+        start['city'] = "wor"
+        start['state'] = "MA"
+        start['zip'] = "32567"
+        result['startLocation'] = start
+        result['targetLocation'] = start
+        result['date'] = '1970-01-01'
+        result['time'] = '00:00:00'
+        result['oid'] = 1
+        result['available'] = 5
+        return jsonify(result)
+        # return jsonify(CarPools.encode_json(allCarPools))
 
     def post(self):
         # query CarPools.
@@ -79,4 +104,29 @@ class CarPools(Resource):
                        end.longitude == form.target_longitude.data, end.latitude == form.target_latitude.data). \
                 order_by(desc(Offer.time)).all()
 
-        return jsonify(CarPools.encode_json(carPools))
+        result = {}
+        car = {}
+        car['plate'] = "65dfl"
+        car['model'] = "mazda 6"
+        car['make'] = "mazda"
+        result['car'] = car
+        offerer = {}
+        offerer['name'] = "zy"
+        offerer['phone'] = "456788"
+        offerer['email'] = "e@w.com"
+        result['offerer'] = offerer
+        start = {}
+        start['streetNumber'] = "32"
+        start['street'] = "john"
+        start['city'] = "wor"
+        start['state'] = "MA"
+        start['zip'] = "32567"
+        result['startLocation'] = start
+        result['targetLocation'] = start
+        result['date'] = '1970-01-01'
+        result['time'] = '00:00:00'
+        result['oid'] = 1
+        result['available'] = 5
+        return jsonify(result)
+
+        # return jsonify(CarPools.encode_json(carPools))
