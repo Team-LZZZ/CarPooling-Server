@@ -77,9 +77,11 @@ class CarPools(Resource):
         result['time'] = '00:00:00'
         result['oid'] = 1
         result['available'] = 5
+        list = []
+        list.append(result)
         re = {}
         re['status'] = True
-        re['message'] = result
+        re['message'] = list
         return jsonify(re)
         # return jsonify(CarPools.encode_json(allCarPools))
 
@@ -133,9 +135,11 @@ class CarPools(Resource):
         result['time'] = '00:00:00'
         result['oid'] = 1
         result['available'] = 5
+        list = []
+        list.append(result)
         re = {}
         re['status'] = True
-        re['message'] = result
+        re['message'] = list
         return jsonify(re)
 
         # return jsonify(CarPools.encode_json(carPools))
