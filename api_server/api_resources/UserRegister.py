@@ -22,6 +22,6 @@ class UserRegister(Resource):
             new_user = User(name=form.name.data, password=form.password.data, phone=form.phone.data,
                             email=form.email.data)
             db.session.add(new_user)
-            return jsonify({"register_status": True})
+            return jsonify({"status": True})
         error_message = [form.errors[n] for n in form.errors][0]
-        return jsonify({"register_status": False, "message": error_message})
+        return jsonify({"status": False, "message": error_message})

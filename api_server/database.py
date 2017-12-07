@@ -14,7 +14,7 @@ class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    email = db.Column(db.String(64))
+    email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(64))
     password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
@@ -64,7 +64,7 @@ class Location(db.Model):
     zip = db.Column(db.String(64))
 
     def __repr__(self):
-        return '<Location %r>' % self.ll
+        return '<Location %r>' % self.longitude, self.latitude
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -72,12 +72,13 @@ class Location(db.Model):
 
 class Reservation(db.Model):
     __tablename__ = 'Reservation'
-    offer_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
-    client_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
-    time = db.Column(db.DateTime, primary_key=True)
+    rid = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    o_id = db.Column(db.Integer, db.ForeignKey("Offer.oid"))
+    num = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<Reservation %r>' % self.offer_name, self.client_name, self.time
+        return '<Reservation %r>' % self.rid
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -85,8 +86,9 @@ class Reservation(db.Model):
 
 class Offer(db.Model):
     __tablename__ = 'Offer'
-    offer_name = db.Column(db.String, db.ForeignKey('User.name'), primary_key=True)
-    time = db.Column(db.DateTime, primary_key=True)
+    oid = db.Column(db.Integer, primary_key=True)
+    offer_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    time = db.Column(db.DateTime)
     start_longitude = db.Column(db.Float(32))
     start_latitude = db.Column(db.Float(32))
     end_longitude = db.Column(db.Float(32))
@@ -97,7 +99,7 @@ class Offer(db.Model):
     db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])
 
     def __repr__(self):
-        return '<Offer %r>' % self.offer_name, self.time
+        return '<Offer %r>' % self.oid
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

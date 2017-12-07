@@ -19,19 +19,21 @@ class UserSettings(Resource):
         name, email, password
         """
         form = UpdateForm.from_json(request.get_json())
+        error_message = []
 
         if not g.user:
-            return jsonify({"login_staus": False, "message": "Please login"})
+            error_message.append("Please login")
+            return jsonify({"status": False, "message": error_message})
 
         if form.validate_on_submit():
             current_user = User.query.filter_by(id=g.user.id).first()
-            if form.email.data:
-                current_user.email = form.email.data
+            if form.name.data:
+                current_user.name = form.name.data
             if form.phone.data:
                 current_user.phone = form.phone.data
             if form.new_password.data:
                 current_user.password = form.new_password.data
             db.session.commit()
-            return jsonify({"update_status": True})
+            return jsonify({"status": True})
         error_message = [form.errors[n] for n in form.errors][0]
-        return jsonify({"update_status": False, "message": error_message})
+        return jsonify({"status": False, "message": error_message})
