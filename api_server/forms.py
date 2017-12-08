@@ -1,7 +1,6 @@
 from flask import g
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, PasswordField, IntegerField, FloatField, FieldList, FormField, \
-    DateTimeField
+from wtforms import StringField, BooleanField, PasswordField, IntegerField, FloatField
 from wtforms.validators import DataRequired, Length, EqualTo, NumberRange, Optional
 from .database import User
 
@@ -49,7 +48,7 @@ class OfferForm(FlaskForm):
     start_latitude = FloatField('start_latitude', validators=[DataRequired()])
     target_longitude = FloatField('target_longitude', validators=[DataRequired()])
     target_latitude = FloatField('target_latitude', validators=[DataRequired()])
-    time = DateTimeField('time', validators=[DataRequired()])
+    time = IntegerField('time', validators=[DataRequired()])
     seats_available = IntegerField('seatsAvailable', validators=[DataRequired()])
     car_plate = StringField('carPlate', validators=[DataRequired(), Length(1, 64)])
 
@@ -60,6 +59,6 @@ class ReservationForm(FlaskForm):
 
 
 class CarPoolSearchForm(FlaskForm):
-    time = DateTimeField('time')
+    time = IntegerField('time')
     target_longitude = FloatField('target_longitude', validators=[DataRequired()])
     target_latitude = FloatField('target_latitude', validators=[DataRequired()])

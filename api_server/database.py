@@ -19,8 +19,8 @@ class User(db.Model):
     phone = db.Column(db.String(64))
     password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
-    offers = db.relationship('Offer', backref='user')
-    reservations = db.relationship('Reservation', backref='reservation_u')
+    offers = db.relationship('Offer', backref='user_o')
+    reservations = db.relationship('Reservation', backref='user_r')
 
     @property
     def password(self):
@@ -58,8 +58,8 @@ class User(db.Model):
 
 class Location(db.Model):
     __tablename__ = 'Location'
-    longitude = db.Column(db.Float(32), primary_key=True)
-    latitude = db.Column(db.Float(32), primary_key=True)
+    longitude = db.Column(db.Float(64), primary_key=True)
+    latitude = db.Column(db.Float(64), primary_key=True)
     street_num = db.Column(db.Integer)
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
@@ -92,13 +92,13 @@ class Offer(db.Model):
     oid = db.Column(db.Integer, primary_key=True)
     offer_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     time = db.Column(db.DateTime)
-    start_longitude = db.Column(db.Float(32))
-    start_latitude = db.Column(db.Float(32))
-    end_longitude = db.Column(db.Float(32))
-    end_latitude = db.Column(db.Float(32))
+    start_longitude = db.Column(db.Float(64))
+    start_latitude = db.Column(db.Float(64))
+    end_longitude = db.Column(db.Float(64))
+    end_latitude = db.Column(db.Float(64))
     car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
     seats_available = db.Column(db.Integer)
-    reservations = db.relationship('Reservation', backref='reservation_o')
+    reservations = db.relationship('Reservation', backref='offer')
     db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
     db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])
 

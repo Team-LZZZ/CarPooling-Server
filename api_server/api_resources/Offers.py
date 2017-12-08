@@ -4,6 +4,7 @@ from .GetToken import auth
 from api_server import db
 from ..database import Offer, Location, User, Car, Reservation
 from sqlalchemy import desc
+from ..forms import OfferForm
 
 
 class Offers(Resource):
@@ -88,6 +89,7 @@ def post(self):
     #     search_currency_post = search_currency_post.order_by(Post.time)
     #     return jsonify([n.as_dict() for n in search_currency_post])
     # return jsonify({"post_search_status": False, "message": form.errors})
+    form = OfferForm.from_json(request.get_json())
     return jsonify({"status": True})
 
 
