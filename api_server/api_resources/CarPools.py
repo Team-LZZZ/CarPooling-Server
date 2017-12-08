@@ -50,7 +50,7 @@ class CarPools(Resource):
         re = {}
         re['status'] = True
         re['message'] = result
-        return jsonify(re)
+        return re
 
     def get(self):
         # get allCarPools.

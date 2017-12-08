@@ -17,7 +17,6 @@ class User(db.Model):
     name = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(64))
-    password = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
     offers = db.relationship('Offer', backref='user_o')
     reservations = db.relationship('Reservation', backref='user_r')
