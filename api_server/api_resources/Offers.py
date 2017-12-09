@@ -34,20 +34,69 @@ class Offers(Resource):
 
     def get(self):
         # get current offers.
-        start = db.aliased(Location)
-        end = db.aliased(Location)
-        allCarPools = db.session.query(start.zip, start.street, start.street_num,
-                                       end.zip, end.street, end.street_num, start.city, end.city, Offer.time,
-                                       Offer.seats_available, Offer.oid). \
-            filter(start.longitude == Offer.start_longitude, start.latitude == Offer.start_latitude,
-                   end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude,
-                   g.user.id == Offer.offer_id). \
-            order_by(desc(Offer.oid)).all()
-        clients = db.session.query(Reservation.num, User.name, User.email, User.phone). \
-            filter(g.user.id == Offer.offer_id, Offer.oid == Reservation.o_id,
-                   Reservation.client_id == User.id).group_by(Reservation.o_id). \
-            order_by(desc(Offer.oid)).all()
-        print(clients)
+        # current_user = User.query.filter_by(id=g.user.id).first()
+        # offers = current_user.offers
+        # result = []
+        # for i in offers:
+        #     start = {}
+        #     end = {}
+        #     car = {}
+        #     offerer = {}
+        #     start['zip'] = i.start_location.zip
+        #     start['street'] = i.start_location.street
+        #     start['streetNumber'] = i.start_location.street_num
+        #     end['zip'] = i.end_location.zip
+        #     end['street'] = i.end_location.street
+        #     end['streetNumber'] = i.end_location.street_num
+        #     start['city'] = i.start_location.city
+        #     end['city'] = i.end_location.city
+        #     offerer['name'] = i.user.name
+        #     offerer['email'] = i.user.email
+        #     offerer['phone'] = i.user.phone
+        #     car['make'] = i.car.make
+        #     car['model'] = i.car.model
+        #     car['plate'] = i.car.plate
+        #     start['state'] = i.start_location.state
+        #     end['state'] = i.end_location.state
+        #     print(start)
+        #     print(end)
+        #
+        #     list = []
+        #     for r in i.reservations:
+        #         client = {}
+        #         client['name'] = r.user.name
+        #         client['email'] = r.user.email
+        #         client['phone'] = r.user.phone
+        #         list.append(client)
+        #
+        #     element = {}
+        #     element['datetime'] = i.time
+        #     element['available'] = i.seats_available
+        #     element['oid'] = i.id
+        #     element['car'] = car
+        #     element['offerer'] = offerer
+        #     element['startLocation'] = start
+        #     element['targetLocation'] = end
+        #     element['reserverList'] = list
+        #     result.append(str(element))
+        # re = {}
+        # re['status'] = True
+        # re['message'] = result
+
+        # start = db.aliased(Location)
+        # end = db.aliased(Location)
+        # allCarPools = db.session.query(start.zip, start.street, start.street_num,
+        #                                end.zip, end.street, end.street_num, start.city, end.city, Offer.time,
+        #                                Offer.seats_available, Offer.oid). \
+        #     filter(start.longitude == Offer.start_longitude, start.latitude == Offer.start_latitude,
+        #            end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude,
+        #            g.user.id == Offer.offer_id). \
+        #     order_by(desc(Offer.oid)).all()
+        # clients = db.session.query(Reservation.num, User.name, User.email, User.phone). \
+        #     filter(g.user.id == Offer.offer_id, Offer.oid == Reservation.o_id,
+        #            Reservation.client_id == User.id).group_by(Reservation.o_id). \
+        #     order_by(desc(Offer.oid)).all()
+        # print(clients)
 
         result = {}
         offerer = {}

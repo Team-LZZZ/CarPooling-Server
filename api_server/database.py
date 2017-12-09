@@ -18,8 +18,8 @@ class User(db.Model):
     email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(64))
     password_hash = db.Column(db.String(128))
-    offers = db.relationship('Offer', backref='user_o')
-    reservations = db.relationship('Reservation', backref='user_r')
+    offers = db.relationship('Offer', backref='user')
+    reservations = db.relationship('Reservation', backref='user')
 
     @property
     def password(self):
@@ -57,8 +57,10 @@ class User(db.Model):
 
 class Location(db.Model):
     __tablename__ = 'Location'
-    longitude = db.Column(db.Float(64), primary_key=True)
-    latitude = db.Column(db.Float(64), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    oid = db.Column(db.Integer, db.ForeignKey('Offer.id'))
+    longitude = db.Column(db.Float(64))
+    latitude = db.Column(db.Float(64))
     street_num = db.Column(db.Integer)
     street = db.Column(db.String(64))
     city = db.Column(db.String(64))
@@ -66,7 +68,7 @@ class Location(db.Model):
     zip = db.Column(db.String(64))
 
     def __repr__(self):
-        return '<Location %r>' % self.longitude, self.latitude
+        return '<Location %r>' % self.id
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -74,13 +76,13 @@ class Location(db.Model):
 
 class Reservation(db.Model):
     __tablename__ = 'Reservation'
-    rid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('User.id'))
-    o_id = db.Column(db.Integer, db.ForeignKey("Offer.oid"))
+    oid = db.Column(db.Integer, db.ForeignKey('Offer.id'))
     num = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<Reservation %r>' % self.rid
+        return '<Reservation %r>' % self.id
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -88,21 +90,20 @@ class Reservation(db.Model):
 
 class Offer(db.Model):
     __tablename__ = 'Offer'
-    oid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     offer_id = db.Column(db.Integer, db.ForeignKey('User.id'))
-    time = db.Column(db.DateTime)
-    start_longitude = db.Column(db.Float(64))
-    start_latitude = db.Column(db.Float(64))
-    end_longitude = db.Column(db.Float(64))
-    end_latitude = db.Column(db.Float(64))
-    car_plate = db.Column(db.String(64), db.ForeignKey('Car.plate'))
+    time = db.Column(db.BigInteger)
     seats_available = db.Column(db.Integer)
     reservations = db.relationship('Reservation', backref='offer')
-    db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
-    db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])
+    car = db.relationship('Car', backref='offer', uselist=False)
+    start_location = db.relationship('Location', backref='offer_s', uselist=False)
+    end_location = db.relationship('Location', backref='offer_e', uselist=False)
+
+    # db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
+    # db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])
 
     def __repr__(self):
-        return '<Offer %r>' % self.oid
+        return '<Offer %r>' % self.id
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -110,12 +111,14 @@ class Offer(db.Model):
 
 class Car(db.Model):
     __tablename__ = 'Car'
-    plate = db.Column(db.String(64), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    plate = db.Column(db.String(64))
     make = db.Column(db.String(32))
     model = db.Column(db.String(32))
+    oid = db.Column(db.Integer, db.ForeignKey('Offer.id'))
 
     def __repr__(self):
-        return '<Car %r>' % self.plate
+        return '<Car %r>' % self.id
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

@@ -3,6 +3,7 @@ from flask_restful import Resource
 from api_server import db
 import datetime
 import sys
+from ..database import User
 from .GetToken import auth
 
 
@@ -14,6 +15,10 @@ class Reservations(Resource):
 
     def get(self):
         # get current reservations.
+
+        current_user = User.query.filter_by(id=g.user.id).first()
+        reservations = current_user.reservations
+
         result = {}
         car = {}
         car['plate'] = "65dfl"
