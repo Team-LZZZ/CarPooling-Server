@@ -128,20 +128,18 @@ class Offers(Resource):
 
         # return jsonify(Offers.encode_json(allCarPools, clients))
 
+    def post(self):
+        # create new offers.
+        # form = CurrencySearchForm.from_json(request.get_json())
+        # if form.validate_on_submit():
+        #     search_currency_post = Post.query.filter_by(c1_item=form.c1_item.data, c2_item=form.c2_item.data,
+        #                                                 league=form.league.data)
+        #     search_currency_post = search_currency_post.order_by(Post.time)
+        #     return jsonify([n.as_dict() for n in search_currency_post])
+        # return jsonify({"post_search_status": False, "message": form.errors})
+        form = OfferForm.from_json(request.get_json())
+        return jsonify({"status": True})
 
-def post(self):
-    # create new offers.
-    # form = CurrencySearchForm.from_json(request.get_json())
-    # if form.validate_on_submit():
-    #     search_currency_post = Post.query.filter_by(c1_item=form.c1_item.data, c2_item=form.c2_item.data,
-    #                                                 league=form.league.data)
-    #     search_currency_post = search_currency_post.order_by(Post.time)
-    #     return jsonify([n.as_dict() for n in search_currency_post])
-    # return jsonify({"post_search_status": False, "message": form.errors})
-    form = OfferForm.from_json(request.get_json())
-    return jsonify({"status": True})
-
-
-def delete(self):
-    # delete offers.
-    return
+    def delete(self):
+        # delete offers.
+        return
