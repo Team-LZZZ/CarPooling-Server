@@ -3,9 +3,11 @@ from flask_restful import Resource
 from api_server import db
 import sys
 from ..database import User
+from operator import itemgetter, attrgetter
 from .GetToken import auth
 from ..database import Offer, Location, User, Car, Reservation
 from ..forms import ReservationForm
+import time
 
 
 class Reservations(Resource):
@@ -21,8 +23,8 @@ class Reservations(Resource):
             end = {}
             car = {}
             offerer = {}
-            start['address'] = i[1].start_location.address
-            end['address'] = i[1].end_location.address
+            start['address'] = i[1].locations[0].address
+            end['address'] = i[1].locations[1].address
             offerer['name'] = i[1].user.name
             offerer['email'] = i[1].user.email
             offerer['phone'] = i[1].user.phone
@@ -35,9 +37,7 @@ class Reservations(Resource):
             for r in i[1].reservations:
                 client = {}
                 client['name'] = r.user.name
-                client['email'] = r.user.email
-                client['phone'] = r.user.phone
-                client['photo'] = r.user.photo
+                client['num'] = r.num
                 list.append(client)
 
             element = {}
@@ -57,10 +57,11 @@ class Reservations(Resource):
 
     def get(self):
         # get current reservations.
-
+        t = time.time()
         current_user = User.query.filter_by(id=g.user.id).first()
         reservations = current_user.reservations
         offers = [(n.id, n.offer) for n in reservations]
+        # sorted(offers, key=lambda offer: offer[1].time, reverse=True)
 
         return jsonify(Reservations.encode_json(offers))
         # result = {}

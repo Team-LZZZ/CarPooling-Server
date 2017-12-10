@@ -95,8 +95,7 @@ class Offer(db.Model):
     seats_available = db.Column(db.Integer)
     reservations = db.relationship('Reservation', backref='offer', cascade="all, delete, delete-orphan")
     car = db.relationship('Car', backref='offer', uselist=False, cascade="all, delete, delete-orphan")
-    start_location = db.relationship('Location', backref='offer_s', uselist=False, cascade="all, delete, delete-orphan")
-    end_location = db.relationship('Location', backref='offer_e', uselist=False, cascade="all, delete, delete-orphan")
+    locations = db.relationship('Location', backref='offer', cascade="all, delete, delete-orphan")
 
     # db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
     # db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])

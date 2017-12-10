@@ -4,6 +4,7 @@ from .GetToken import auth
 from api_server import db
 from ..database import Offer, Location, User, Car, Reservation
 from sqlalchemy import desc
+import time
 
 
 class Offers(Resource):
@@ -17,12 +18,12 @@ class Offers(Resource):
         for i in offers:
             start = {}
             end = {}
-            car = {}
-            start['address'] = i.start_location.address
-            end['address'] = i.end_location.address
-            car['make'] = i.car.make
-            car['model'] = i.car.model
-            car['plate'] = i.car.plate
+            # car = {}
+            start['address'] = i.locations[0].address
+            end['address'] = i.locations[1].address
+            # car['make'] = i.car.make
+            # car['model'] = i.car.model
+            # car['plate'] = i.car.plate
 
             list = []
             for r in i.reservations:
@@ -30,13 +31,15 @@ class Offers(Resource):
                 client['name'] = r.user.name
                 client['email'] = r.user.email
                 client['phone'] = r.user.phone
+                client['photo'] = r.user.photo
+                client['num'] = r.num
                 list.append(client)
 
             element = {}
             element['time'] = i.time
             element['available'] = i.seats_available
             element['oid'] = i.id
-            element['car'] = car
+            # element['car'] = car
             element['startLocation'] = start
             element['targetLocation'] = end
             element['reserverList'] = list
@@ -48,7 +51,8 @@ class Offers(Resource):
 
     def get(self):
         # get current offers.
-        current_user = User.query.filter_by(id=g.user.id).first()
+        t = time.time()
+        current_user = Offer.query.filter_by(id=g.user.id).first()
         offers = current_user.offers
 
         # start = db.aliased(Location)
@@ -100,7 +104,12 @@ class Offers(Resource):
         #     search_currency_post = search_currency_post.order_by(Post.time)
         #     return jsonify([n.as_dict() for n in search_currency_post])
         # return jsonify({"post_search_status": False, "message": form.errors})
+        t = time.time()
         new_offer = request.get_json()
+        if new_offer['time'] <= int(round(t * 1000)):
+            error_messages = []
+            error_messages.append("You cannot offer a carpool in the past")
+            return jsonify({"status": False, "message": error_messages})
         offer = Offer(time=new_offer['time'], seats_available=new_offer['seats_available'], offer_id=g.user.id)
         car = Car(plate=new_offer['car']['plate'], make=new_offer['car']['make'], model=new_offer['car']['model'])
         start = Location(address=new_offer['startLocation']['address'],
@@ -110,8 +119,8 @@ class Offers(Resource):
                        longitude=new_offer['targetLocation']['longitude'],
                        latitude=new_offer['targetLocation']['latitude'])
         offer.car = car
-        offer.start_location = start
-        offer.end_location = end
+        offer.locations.append(start)
+        offer.locations.append(end)
         db.session.add(offer)
         return jsonify({"status": True})
 

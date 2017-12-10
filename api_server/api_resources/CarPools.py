@@ -5,6 +5,7 @@ from api_server import db
 from api_server.forms import CarPoolSearchForm
 from sqlalchemy import desc
 from .GetToken import auth
+import time
 
 
 class CarPools(Resource):
@@ -21,8 +22,8 @@ class CarPools(Resource):
             end = {}
             car = {}
             offerer = {}
-            start['address'] = i.start_location.address
-            end['address'] = i.end_location.address
+            start['address'] = i.locations[0].address
+            end['address'] = i.locations[1].address
             offerer['name'] = i.user.name
             offerer['email'] = i.user.email
             offerer['phone'] = i.user.phone
@@ -30,10 +31,10 @@ class CarPools(Resource):
             car['make'] = i.car.make
             car['model'] = i.car.model
             car['plate'] = i.car.plate
-            start['longitude'] = i.start_location.longitude
-            end['longitude'] = i.end_location.longitude
-            start['latitude'] = i.start_location.latitude
-            end['latitude'] = i.end_location.latitude
+            start['longitude'] = i.locations[0].longitude
+            end['longitude'] = i.locations[1].longitude
+            start['latitude'] = i.locations[0].latitude
+            end['latitude'] = i.locations[1].latitude
 
             element = {}
             element['time'] = i.time
@@ -61,8 +62,8 @@ class CarPools(Resource):
         #            end.longitude == Offer.end_longitude, end.latitude == Offer.end_latitude, User.id == Offer.offer_id,
         #            Car.plate == Offer.car_plate). \
         #     order_by(desc(Offer.time)).all()
-
-        offers = Offer.query.all()
+        t = time.time()
+        offers = Offer.query.filter_by(Offer.time >= int(round(t * 1000))).order_by(desc(Offer.time)).all()
         return jsonify(CarPools.encode_json(offers))
 
         # result = {}
@@ -97,15 +98,19 @@ class CarPools(Resource):
 
     def post(self):
         # query CarPools.
+        t = time.time()
         form = CarPoolSearchForm.from_json(request.get_json())
         if form.time.data:
-            offers = Offer.query.join(Offer.end_location).filter(Offer.time == form.time.data,
-                                                                 Location.longitude == form.target_longitude.data,
-                                                                 Location.latitude == form.target_latitude.data).all()
+            offers = Offer.query.join(Offer.locations).filter(Offer.time == form.time.data,
+                                                              Offer.time >= int(round(t * 1000)),
+                                                              Location.longitude == form.target_longitude.data,
+                                                              Location.latitude == form.target_latitude.data).order_by(
+                desc(Offer.time)).all()
         else:
-            offers = Offer.query.join(Offer.end_location).filter(
-                Location.longitude == form.target_longitude.data,
-                Location.latitude == form.target_latitude.data).all()
+            offers = Offer.query.join(Offer.locations).filter(Offer.time >= int(round(t * 1000)),
+                                                              Location.longitude == form.target_longitude.data,
+                                                              Location.latitude == form.target_latitude.data).order_by(
+                desc(Offer.time)).all()
 
         # result = {}
         # car = {}
@@ -137,5 +142,4 @@ class CarPools(Resource):
         # re['message'] = list
         # print(list)
         # return jsonify(re)
-
         return jsonify(CarPools.encode_json(offers))
