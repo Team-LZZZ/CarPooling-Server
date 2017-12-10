@@ -4,7 +4,6 @@ from .GetToken import auth
 from api_server import db
 from ..database import Offer, Location, User, Car, Reservation
 from sqlalchemy import desc
-from ..forms import OfferForm
 
 
 class Offers(Resource):
@@ -13,75 +12,44 @@ class Offers(Resource):
     """
     decorators = [auth.login_required]
 
-    def encode_json(offers, clients):
+    def encode_json(offers):
         result = []
-        for i in range(0, len(offers)):
-            unit = {}
-            unit['start_zip'] = offers[i][0]
-            unit['start_st'] = offers[i][1]
-            unit['start_stnum'] = offers[i][2]
-            unit['end_zip'] = offers[i][3]
-            unit['end_st'] = offers[i][4]
-            unit['end_stnum'] = offers[i][5]
-            unit['start_city'] = offers[i][6]
-            unit['end_city'] = offers[i][7]
-            unit['time'] = offers[i][8]
-            unit['available'] = offers[i][9]
-            unit['oid'] = offers[i][10]
-            unit['clients'] = clients[i]
-            result.append(unit)
-        return result
+        for i in offers:
+            start = {}
+            end = {}
+            car = {}
+            start['address'] = i.start_location.address
+            end['address'] = i.end_location.address
+            car['make'] = i.car.make
+            car['model'] = i.car.model
+            car['plate'] = i.car.plate
+
+            list = []
+            for r in i.reservations:
+                client = {}
+                client['name'] = r.user.name
+                client['email'] = r.user.email
+                client['phone'] = r.user.phone
+                list.append(client)
+
+            element = {}
+            element['time'] = i.time
+            element['available'] = i.seats_available
+            element['oid'] = i.id
+            element['car'] = car
+            element['startLocation'] = start
+            element['targetLocation'] = end
+            element['reserverList'] = list
+            result.append(str(element))
+        re = {}
+        re['status'] = True
+        re['message'] = result
+        return re
 
     def get(self):
         # get current offers.
-        # current_user = User.query.filter_by(id=g.user.id).first()
-        # offers = current_user.offers
-        # result = []
-        # for i in offers:
-        #     start = {}
-        #     end = {}
-        #     car = {}
-        #     offerer = {}
-        #     start['zip'] = i.start_location.zip
-        #     start['street'] = i.start_location.street
-        #     start['streetNumber'] = i.start_location.street_num
-        #     end['zip'] = i.end_location.zip
-        #     end['street'] = i.end_location.street
-        #     end['streetNumber'] = i.end_location.street_num
-        #     start['city'] = i.start_location.city
-        #     end['city'] = i.end_location.city
-        #     offerer['name'] = i.user.name
-        #     offerer['email'] = i.user.email
-        #     offerer['phone'] = i.user.phone
-        #     car['make'] = i.car.make
-        #     car['model'] = i.car.model
-        #     car['plate'] = i.car.plate
-        #     start['state'] = i.start_location.state
-        #     end['state'] = i.end_location.state
-        #     print(start)
-        #     print(end)
-        #
-        #     list = []
-        #     for r in i.reservations:
-        #         client = {}
-        #         client['name'] = r.user.name
-        #         client['email'] = r.user.email
-        #         client['phone'] = r.user.phone
-        #         list.append(client)
-        #
-        #     element = {}
-        #     element['datetime'] = i.time
-        #     element['available'] = i.seats_available
-        #     element['oid'] = i.id
-        #     element['car'] = car
-        #     element['offerer'] = offerer
-        #     element['startLocation'] = start
-        #     element['targetLocation'] = end
-        #     element['reserverList'] = list
-        #     result.append(str(element))
-        # re = {}
-        # re['status'] = True
-        # re['message'] = result
+        current_user = User.query.filter_by(id=g.user.id).first()
+        offers = current_user.offers
 
         # start = db.aliased(Location)
         # end = db.aliased(Location)
@@ -98,35 +66,30 @@ class Offers(Resource):
         #     order_by(desc(Offer.oid)).all()
         # print(clients)
 
-        result = {}
-        offerer = {}
-        offerer['name'] = "zy"
-        offerer['phone'] = "456788"
-        offerer['email'] = "e@w.com"
-        start = {}
-        start['streetNumber'] = "32"
-        start['street'] = "john"
-        start['city'] = "wor"
-        start['state'] = "MA"
-        start['zip'] = "32567"
-        result['startLocation'] = start
-        result['targetLocation'] = start
-        list = []
-        list.append(offerer)
-        list.append(offerer)
-        result['reserverList'] = list
-        result['date'] = '1970-01-01'
-        result['time'] = '00:00:00'
-        result['oid'] = 1
-        result['available'] = 5
-        list = []
-        list.append(result)
-        re = {}
-        re['status'] = True
-        re['message'] = list
-        return jsonify(re)
+        # result = {}
+        # offerer = {}
+        # offerer['name'] = "zy"
+        # offerer['phone'] = "456788"
+        # offerer['email'] = "e@w.com"
+        # start = {}
+        # start['address'] = "32h john st, worcester, MA, 01609"
+        # result['startLocation'] = start
+        # result['targetLocation'] = start
+        # list = []
+        # list.append(offerer)
+        # list.append(offerer)
+        # result['reserverList'] = list
+        # result['time'] = '4555555'
+        # result['oid'] = 1
+        # result['available'] = 5
+        # list = []
+        # list.append(str(result))
+        # re = {}
+        # re['status'] = True
+        # re['message'] = list
+        # return jsonify(re)
 
-        # return jsonify(Offers.encode_json(allCarPools, clients))
+        return jsonify(Offers.encode_json(offers))
 
     def post(self):
         # create new offers.
@@ -137,9 +100,24 @@ class Offers(Resource):
         #     search_currency_post = search_currency_post.order_by(Post.time)
         #     return jsonify([n.as_dict() for n in search_currency_post])
         # return jsonify({"post_search_status": False, "message": form.errors})
-        form = OfferForm.from_json(request.get_json())
+        new_offer = request.get_json()
+        offer = Offer(time=new_offer['time'], seats_available=new_offer['seats_available'], offer_id=g.user.id)
+        car = Car(plate=new_offer['car']['plate'], make=new_offer['car']['make'], model=new_offer['car']['model'])
+        start = Location(address=new_offer['startLocation']['address'],
+                         longitude=new_offer['startLocation']['longitude'],
+                         latitude=new_offer['startLocation']['latitude'])
+        end = Location(address=new_offer['targetLocation']['address'],
+                       longitude=new_offer['targetLocation']['longitude'],
+                       latitude=new_offer['targetLocation']['latitude'])
+        offer.car = car
+        offer.start_location = start
+        offer.end_location = end
+        db.session.add(offer)
         return jsonify({"status": True})
 
     def delete(self):
         # delete offers.
-        return
+        oid = request.get_json()["oid"]
+        offer = Offer.query.filter_by(id=oid).first()
+        db.session.delete(offer)
+        return jsonify({"status": True})

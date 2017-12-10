@@ -1,6 +1,7 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, current_app
+from sqlalchemy import desc
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from config import DevelopmentConfig
@@ -19,8 +20,9 @@ class User(db.Model):
     email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(64))
     password_hash = db.Column(db.String(128))
-    offers = db.relationship('Offer', backref='user')
-    reservations = db.relationship('Reservation', backref='user')
+    photo = db.Column(db.String(128))
+    offers = db.relationship('Offer', order_by="desc(Offer.time)", backref='user', cascade="all, delete, delete-orphan")
+    reservations = db.relationship('Reservation', backref='user', cascade="all, delete, delete-orphan")
 
     @property
     def password(self):
@@ -62,11 +64,7 @@ class Location(db.Model):
     oid = db.Column(db.Integer, db.ForeignKey('Offer.id'))
     longitude = db.Column(db.Float(64))
     latitude = db.Column(db.Float(64))
-    street_num = db.Column(db.Integer)
-    street = db.Column(db.String(64))
-    city = db.Column(db.String(64))
-    state = db.Column(db.String(64))
-    zip = db.Column(db.String(64))
+    address = db.Column(db.String(128))
 
     def __repr__(self):
         return '<Location %r>' % self.id
@@ -95,10 +93,10 @@ class Offer(db.Model):
     offer_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     time = db.Column(db.BigInteger)
     seats_available = db.Column(db.Integer)
-    reservations = db.relationship('Reservation', backref='offer')
-    car = db.relationship('Car', backref='offer', uselist=False)
-    start_location = db.relationship('Location', backref='offer_s', uselist=False)
-    end_location = db.relationship('Location', backref='offer_e', uselist=False)
+    reservations = db.relationship('Reservation', backref='offer', cascade="all, delete, delete-orphan")
+    car = db.relationship('Car', backref='offer', uselist=False, cascade="all, delete, delete-orphan")
+    start_location = db.relationship('Location', backref='offer_s', uselist=False, cascade="all, delete, delete-orphan")
+    end_location = db.relationship('Location', backref='offer_e', uselist=False, cascade="all, delete, delete-orphan")
 
     # db.ForeignKeyConstraint(['start_longitude', 'start_latitude'], ['Location.latitude', 'Location.longitude'])
     # db.ForeignKeyConstraint(['end_longitude', 'end_latitude'], ['Location.latitude', 'Location.longitude'])

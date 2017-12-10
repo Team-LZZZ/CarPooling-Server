@@ -33,6 +33,8 @@ class UserSettings(Resource):
                 current_user.phone = form.phone.data
             if form.new_password.data:
                 current_user.password = form.new_password.data
+            if form.photo.data:
+                current_user.photo = form.photo.data
             db.session.commit()
             return jsonify({"status": True})
         error_message = [form.errors[n] for n in form.errors][0]

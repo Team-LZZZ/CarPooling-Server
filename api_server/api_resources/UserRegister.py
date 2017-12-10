@@ -20,7 +20,7 @@ class UserRegister(Resource):
         form = RegistrationForm.from_json(request.get_json())
         if form.validate_on_submit():
             new_user = User(name=form.name.data, password=form.password.data, phone=form.phone.data,
-                            email=form.email.data)
+                            email=form.email.data, photo=form.photo.data)
             db.session.add(new_user)
             return jsonify({"status": True})
         error_message = [form.errors[n] for n in form.errors][0]
