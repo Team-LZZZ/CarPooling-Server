@@ -63,7 +63,7 @@ class CarPools(Resource):
         #            Car.plate == Offer.car_plate). \
         #     order_by(desc(Offer.time)).all()
         t = time.time()
-        offers = Offer.query.filter_by(Offer.time >= int(round(t * 1000))).order_by(desc(Offer.time)).all()
+        offers = Offer.query.filter(Offer.time >= int(round(t * 1000))).order_by(desc(Offer.time)).all()
         return jsonify(CarPools.encode_json(offers))
 
         # result = {}
