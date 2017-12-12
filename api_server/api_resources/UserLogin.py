@@ -21,7 +21,9 @@ class UserLogin(Resource):
                 info['email'] = user.email
                 info['phone'] = user.phone
                 info['photo'] = user.photo
-                return jsonify({"status": True, "token": token.decode("ascii"), "user": info})
+                list = []
+                list.append(str(info))
+                return jsonify({"status": True, "token": token.decode("ascii"), "message": list})
             elif not user:
                 error_messages.append("User not exist")
                 return jsonify({"status": False, "message": error_messages})
