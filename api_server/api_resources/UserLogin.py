@@ -16,7 +16,12 @@ class UserLogin(Resource):
             user = User.query.filter_by(name=form.name.data).first()
             if user and user.verify_password(form.password.data):
                 token = user.generate_auth_token()
-                return jsonify({"status": True, "token": token.decode("ascii")})
+                info = {}
+                info['name'] = user.name
+                info['email'] = user.email
+                info['phone'] = user.phone
+                info['photo'] = user.photo
+                return jsonify({"status": True, "token": token.decode("ascii"), "user": info})
             elif not user:
                 error_messages.append("User not exist")
                 return jsonify({"status": False, "message": error_messages})

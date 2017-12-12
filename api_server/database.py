@@ -1,4 +1,4 @@
-from . import db
+from api_server import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, current_app
 from sqlalchemy import desc
