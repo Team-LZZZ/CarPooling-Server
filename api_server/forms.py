@@ -31,7 +31,6 @@ class RegistrationForm(FlaskForm):
 class UpdateForm(FlaskForm):
     name = StringField('Name')
     phone = IntegerField('Phone')
-    current_password = PasswordField('Current Password', validators=[DataRequired()])
     new_password = PasswordField('New Password')
     photo = StringField('Photo')
 
@@ -39,10 +38,10 @@ class UpdateForm(FlaskForm):
         if User.query.filter_by(name=field.data).first():
             raise ValueError('Username already used')
 
-    def validate_current_password(self, field):
-        temp = User.query.filter_by(id=g.user.id).first()
-        if not temp.verify_password(field.data):
-            raise ValueError('Wrong Password')
+            # def validate_current_password(self, field):
+            #     temp = User.query.filter_by(id=g.user.id).first()
+            #     if not temp.verify_password(field.data):
+            #         raise ValueError('Wrong Password')
 
 
 # class OfferForm(FlaskForm):
